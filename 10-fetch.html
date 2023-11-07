@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fetch</title>
+</head>
+<body>
+    <script>
+        fetch("https://www.7timer.info/bin/astro.php?lon=113.2&lat=23.1&ac=0&unit=metric&output=json&tzshift=0")
+        .then((response) => {
+            return response.json();
+        })
+        .then((data) => {
+            console.log(data.dataseries)
+            document.write("<table border=1 style='width: 70%; margin: 0 auto'>");
+            document.write("<tr style='font-weight: bold; text-align: center; font-size: 25px; background-color: gray'>");
+            document.write("<td>index</td>");
+            document.write("<td>cloudcover</td>");    
+            document.write("<td>prec_type</td>");    
+            document.write("<td>rh2m</td>");    
+            document.write("<td>seeing</td>");    
+            document.write("<td>temp2m</td>");    
+            document.write("<td>timepoint</td>");    
+            document.write("<td>transparency</td>");
+            document.write("</tr>");        
+            for (let i=0; i<24; i++){
+                document.write("<tr style='text-align: center; font-size: 20px'>");
+                let use = data.dataseries[i];
+                document.write(`<td>${i}</td>`);
+                document.write(`<td>${use.cloudcover}</td>`);
+                document.write(`<td>${use.prec_type}</td>`);
+                document.write(`<td>${use.rh2m}</td>`);
+                document.write(`<td>${use.seeing}</td>`);
+                document.write(`<td>${use.temp2m}</td>`);
+                document.write(`<td>${use.timepoint}</td>`);
+                document.write(`<td>${use.transparency}</td>`);
+                document.write("</tr>");
+            }
+            document.write("</table>");
+            // innerHTML 을 사용해도 좋을 것 같다
+            // 모든 테이블을 document.write를 사용하면 css가 먹지 않는 것 같다.
+        });
+    </script>
+</body>
+</html>
+ 
+<!-- <body>
+    <h2>fetch</h2>
+    <table id="table">
+        <tr>
+            <td>timepoint</td>
+            <td>cloudcover</td>
+            <td>seeing</td>
+            <td>transparency</td>
+            <td>lifted_index</td>
+        </tr>
+    </table>
+    <script>
+        fetch("https://www.7timer.info/bin/astro.php?lon=113.2&lat=23.1&ac=0&unit=metric&output=json&tzshift=0")
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                var table = document.getElementById('table');
+                for (let i = 0; i < 24; i++){
+                    let row = `<tr>
+                                            <td>${data.dataseries[i].timepoint}</td>
+                                            <td>${data.dataseries[i].cloudcover}</td>
+                                            <td>${data.dataseries[i].seeing}</td>
+                                            <td>${data.dataseries[i].transparency}</td>
+                                            <td>${data.dataseries[i].lifted_index}</td>
+                                        </tr>`;
+                    table.innerHTML += row;            
+                }
+            })
+    </script>
+</body> -->
