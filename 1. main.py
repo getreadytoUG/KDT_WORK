@@ -67,3 +67,4 @@ def update_user(id: int, user: UserForUpdate):
 def delete_item(id: int):
     users.pop(id)
     return {"success": "ok"}
+

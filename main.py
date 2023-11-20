@@ -13,3 +13,4 @@ async def upload_file(file: UploadFile):
         with open(save_dir, "wb") as dest_file:
             sh.copyfileobj(file.file, dest_file)
         return {"message": "success"}
+    

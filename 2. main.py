@@ -12,3 +12,4 @@ async def read_root(request: Request):
     data = {"name": "김사과", "title": "김사과의 홈페이지"}
     return templates.TemplateResponse("index.html", {"request": request, "data": data})
 
+
