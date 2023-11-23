@@ -43,6 +43,9 @@
 fastapi 사용
     pip install fastapi
 
+uvicorn 실행
+    pip install uvicorn
+
 실행할 때 
     uvicorn [파일이름]:app --reload
 
