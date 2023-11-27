@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>index</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        h2 {
+            font-size: 50px;
+            text-align: center;
+        }
+
+        #container {
+            width: 80%;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1%;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .image-container {
+            width: 23%;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .description {
+            padding: 10px;
+            background-color: #f8f8f8;
+        }
+
+        .description p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <h2>banapresso</h2>
+    <div id="map" style="width:70%;height:700px; margin: 0 auto;"></div>
+    <div id="container"></div>
+    <script type="text/javascript"
+    src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8dbd6d9789ef56436614750381b7f43d&libraries=services"></script>
+    <script>
+        var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+            mapOption = {
+                center: new kakao.maps.LatLng(37.55115, 126.9881), // 지도의 중심좌표
+                level: 9 // 지도의 확대 레벨
+            };
+        var map = new kakao.maps.Map(mapContainer, mapOption);
+        
+        var geocoder = new kakao.maps.services.Geocoder();
+        
+
+        fetch("http://localhost:8080/banapresso/markets")
+            .then(res => res.json())
+            .then(datas => {
+                const container = document.getElementById("container");
+                let idx = 0;
+                datas.forEach(element => {
+                    const div = document.createElement("div");
+                    div.classList.add("image-container");
+                    div.innerHTML = `<img src="${element.img}">`;
+
+                    const description = document.createElement("div");
+                    description.classList.add("description");
+                    description.innerHTML = `<p>${element.name}</p><p>${element.location}</p>`;
+
+                    div.appendChild(description);
+                    container.appendChild(div);
+
+                    geocoder.addressSearch(`${element.location}`, function (result, status) {
+                        if (status === kakao.maps.services.Status.OK){
+                            var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+                            var marker = new kakao.maps.Marker({
+                                map: map,
+                                position: coords
+                            });
+
+                            var divId = `div_${idx}`;
+                            console.log(idx)
+                            div.id = divId;
+                            idx += 1;
+
+                            var infowindow = new kakao.maps.InfoWindow({
+                                content: `<div style="width:150px;text-align:center;padding:6px 0;">${element.name}</div>`
+                            });
+                            kakao.maps.event.addListener(marker, "mouseover", function(){
+                                infowindow.open(map, marker);
+                            });
+                            kakao.maps.event.addListener(marker, "mouseout", function(){
+                                infowindow.close();
+                            })
+                            kakao.maps.event.addListener(marker, "click", function(){
+                                const selectedDiv = document.getElementById(divId);
+                                
+                                window.scrollTo({
+                                    top: selectedDiv.offsetTop,
+                                    behavior: "auto"
+                                });
+
+                                selectedDiv.style.transition = "transform 0.3s ease-in-out"
+                                selectedDiv.style.transform = "scale(1.2)";
+                                setTimeout(()=>{
+                                    selectedDiv.style.transform = "scale(1)";
+                                }, 1000);
+                            })
+
+                            map.setCenter(coords);
+                        }
+                    });
+                });
+            });
+    </script>
+
+</body>
+</html>
